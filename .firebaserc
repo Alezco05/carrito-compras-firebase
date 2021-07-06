@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "carrito-compras-74535": {
+      "hosting": {
+        "carrito-compras": [
+          "carrito-compras-74535"
+        ]
+      }
+    }
+  }
+}
