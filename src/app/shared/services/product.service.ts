@@ -11,7 +11,7 @@ import { map } from "rxjs/operators";
 @Injectable({
   providedIn: "root"
 })
-export class ProductoService {
+export class ProductService {
   productsColeccion: AngularFirestoreCollection<Product>;
   productDoc: AngularFirestoreDocument<Product>;
   products: Observable<Product[]>;

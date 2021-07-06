@@ -1,0 +1,83 @@
+<div *ngIf="alert">
+  <div class="alert alert-danger fade-in" role="alert">
+    Este usuario ya se existe.
+  </div>
+</div>
+
+<form [formGroup]="form">
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Datos del Producto</h3>
+    </div>
+  </div>
+  <div class="row">
+    <mat-form-field class="col-md-6 col-12">
+      <div>
+        <input matInput formControlName="nombre" type="text" required>
+      </div>
+      <mat-label>Nombre del producto</mat-label>
+      <div *ngIf="form.get('nombre').invalid && (form.get('nombre').dirty || form.get('nombre').touched)">
+        <small *ngIf="form.get('nombre').errors.required" class="text-danger">Nombre Requerido</small>
+        <small *ngIf="form.get('nombre').errors.min || form.get('nombre').errors.max" class="text-danger">Nombre Invalido</small>
+      </div>
+    </mat-form-field>
+    <mat-form-field class="col-md-6 col-12">
+      <div>
+        <input matInput formControlName="sku" type="text" required>
+      </div>
+      <mat-label>SKU</mat-label>
+      <div *ngIf="form.get('nombre').invalid && (form.get('nombre').dirty || form.get('nombre').touched)">
+        <small *ngIf="form.get('nombre').errors.required" class="text-danger">SKU Requerido</small>
+        <small *ngIf="form.get('nombre').errors.min || form.get('nombre').errors.max" class="text-danger">SKU Invalido</small>
+      </div>
+    </mat-form-field>
+  </div>
+  <div class="row">
+    <mat-form-field class="col-12">
+      <textarea
+      formControlName="descripcion" 
+      matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="5"></textarea>
+      <mat-label>Descripcion </mat-label>
+      <div *ngIf="form.get('nombre').invalid && (form.get('nombre').dirty || form.get('nombre').touched)">
+        <small *ngIf="form.get('nombre').errors.required" class="text-danger">Descripcion Requerida</small>
+        <small *ngIf="form.get('nombre').errors.minlength" class="text-danger">Descripcion debe ser al menos 3 carácteres de
+          largo</small>
+        <small *ngIf="form.get('nombre').errors.maxlength" class="text-danger">Descripcion Demasiada Largo</small>
+      </div>
+    </mat-form-field>
+  </div>
+ 
+
+ 
+  <div *ngIf="!data; else update">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-8 col-sm-9 col-lg-5 col-xs-10">
+        <button mat-raised-button [disabled]=!form.valid class="btn btn-block btn-info" (click)="OnSubmit()">
+          <span class="ml-2">Agregar Producto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <ng-template #update>
+    <div>
+      <div class="row d-flex justify-content-center">
+        <div class="col-md-8 col-sm-9 col-lg-5 col-xs-10 mb-2">
+          <button mat-raised-button class="btn btn-block btn-info" (click)="OnUpdate()" [disabled]="!form.valid">
+            <span class="ml-2">Actualizar Producto</span>
+          </button>
+        </div>
+        <div class="col-md-8 col-sm-9 col-lg-5 col-xs-10 mb-2">
+          <button mat-raised-button class="btn btn-block btn-danger" (click)="closeModal()">
+            <span class="ml-2">Cancelar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+
+</form>

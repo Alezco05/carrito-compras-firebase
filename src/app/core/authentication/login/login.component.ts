@@ -43,7 +43,8 @@ export class LoginComponent implements OnInit {
   signIn(data){
     this.dataService
     .signIn(data)
-    .then(() => {
+    .then((resp: any) => {
+      localStorage.setItem('user', JSON.stringify(resp.user.email));
       this.router.navigate(["/"]);
     })
     .catch(() => {
