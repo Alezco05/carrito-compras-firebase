@@ -1,0 +1,35 @@
+<div class="body">
+    <div class="login-page animate__animated animate__fadeIn">
+      <h2>{{title}}</h2>
+      <div class="form">
+        <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmitForm()">
+          <input
+            type="email"
+            formControlName="email"
+            name="email"
+            placeholder="Escriba su Email"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            formControlName="password"
+            placeholder="Escriba su contraseña"
+            required
+          />
+          <button [disabled]="form.invalid">{{title}}</button>
+          <p class="message" *ngIf="params === 'login' ; else signIn"><a routerLink="/auth/registrarse">Registrarse</a></p>
+          <ng-template #signIn>
+              <p class="message"><a routerLink="/auth/registrarse">Iniciar Sesión</a></p>
+          </ng-template>
+        </form>
+      </div>
+  
+      <div class="alert alert-dismissible alert-danger mt-4" *ngIf="error">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>{{textError}}</strong>
+      </div>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+  
