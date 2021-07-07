@@ -15,7 +15,6 @@ import Swal from 'sweetalert2';
   styleUrls: ['./product-list.component.css'],
 })
 export class ProductListComponent implements OnInit, OnDestroy {
-  searched: Boolean = false;
   total: ProductCart[] = [];
   filterPost = '';
   unsubscribeSignal: Subject<void> = new Subject();
@@ -23,12 +22,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   p: number = 1;
   name = new FormControl('');
-  index: number;
   cart: Cart;
   constructor(
     private productService: ProductService,
     public dialog: MatDialog,
-    private router: Router,
     private activatedRoute: ActivatedRoute
   ) { 
     const data = this.activatedRoute.snapshot.queryParamMap.get('data');
@@ -87,12 +84,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
       data,
     });
   }
-  sustrabProduct(product) {
-    const product_id = product.id;
-    product['total'] = product['total'] < 1 ? 0 : product['total'] - 1;
-    const found = this.total.find(
-      (element) => element.product_id === product_id
+  findProduct(id): ProductCart {
+    return this.total.find(
+      (element) => element.product_id === id
     );
+  }
+  sustrabProduct(product) {
+    product['total'] = product['total'] < 1 ? 0 : product['total'] - 1;
+    const found = this.findProduct(product.id);
     if (found !== undefined) {
       const i = this.total.indexOf(found);
       this.total[i].quantity = product['total'];
@@ -101,13 +100,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
   addProduct(product: Product) {
     product['total']++;
-    const product_id = product.id;
-    const found = this.total.find(
-      (element) => element.product_id === product_id
-    );
+    const found = this.findProduct(product.id);
     if (found === undefined) {
       this.total.push({
-        product_id,
+        product_id: product.id,
         product_name: product.nombre,
         quantity: product['total'],
       });
@@ -116,6 +112,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       this.total[i].quantity = product['total'];
     }
    }
+  
   async viewDetail(): Promise<void> {
     const data = this.total;
     data['cart_id'] = this.cart.id;
@@ -132,7 +129,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.unsubscribeSignal.next();
-    // Don't forget to unsubscribe from subject itself
     this.unsubscribeSignal.unsubscribe();
   }
 }

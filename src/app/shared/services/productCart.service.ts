@@ -17,9 +17,7 @@ export class ProductCartService {
   productsCarts: Observable<ProductCart[]>;
   productCart: Observable<ProductCart>;
   constructor(private db: AngularFirestore) {
-    this.productCartsColeccion = db.collection("productsCarts", ref =>
-      ref.orderBy("quantity", "asc")
-    );
+    this.productCartsColeccion = db.collection("productsCarts");
   }
   getProductCarts(): Observable<ProductCart[]> {
     //Obtener los clientes
