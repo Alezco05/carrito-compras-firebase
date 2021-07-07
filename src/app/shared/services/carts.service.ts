@@ -17,10 +17,10 @@ export class CartService {
   carts: Observable<Cart[]>;
   cart: Observable<Cart>;
   constructor(private db: AngularFirestore) {
-    this.cartsColeccion = db.collection("carts");
+    this.cartsColeccion = db.collection("carts",ref =>
+    ref.orderBy("status", "asc"));
   }
   getCarts(): Observable<Cart[]> {
-    //Obtener los clientes
     this.carts = this.cartsColeccion.snapshotChanges().pipe(
       map(cambios => {
         return cambios.map(accion => {

@@ -20,7 +20,6 @@ export class ProductCartService {
     this.productCartsColeccion = db.collection("productsCarts");
   }
   getProductCarts(): Observable<ProductCart[]> {
-    //Obtener los clientes
     this.productsCarts = this.productCartsColeccion.snapshotChanges().pipe(
       map(cambios => {
         return cambios.map(accion => {

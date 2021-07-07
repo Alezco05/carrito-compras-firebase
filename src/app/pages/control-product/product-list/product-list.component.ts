@@ -2,13 +2,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Cart } from 'src/app/shared/models/carts.model';
 import { ProductCart } from 'src/app/shared/models/productCarts.model';
 import { Product } from 'src/app/shared/models/products.model';
 import { ProductService } from 'src/app/shared/services/product.service';
 import Swal from 'sweetalert2';
+import {AppState} from './../../../shared/models/appState' 
+import * as TaskActions from './../../../shared/ngrx/counter.actions';
+
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
@@ -23,17 +27,49 @@ export class ProductListComponent implements OnInit, OnDestroy {
   p: number = 1;
   name = new FormControl('');
   cart: Cart;
+  task: Observable<ProductCart[]>;
   constructor(
     private productService: ProductService,
     public dialog: MatDialog,
-    private activatedRoute: ActivatedRoute
-  ) { 
+    private activatedRoute: ActivatedRoute,
+    private store: Store<AppState>
+  ) {
+    this.task = this.store.select<any>('productCart');
     const data = this.activatedRoute.snapshot.queryParamMap.get('data');
     this.cart = JSON.parse(atob(data));
   }
 
   ngOnInit(): void {
     this.initialQuery();
+  }
+  increment(product: Product) {
+    product['total']++;
+    const found = this.findProduct(product.id);
+    if (found === undefined) {
+      this.store.dispatch(
+        new TaskActions.AddProductCart({
+          product_id: product.id,
+          product_name: product.nombre,
+          quantity: product['total'],
+        })
+      );
+      this.total.push({
+        product_id: product.id,
+        product_name: product.nombre,
+        quantity: product['total'],
+      });
+    } else {
+      const i = this.total.indexOf(found);
+      this.total[i].quantity = product['total'];
+    }
+    this.store.dispatch(
+      new TaskActions.UpdateProductCart({
+        product_id: product.id,
+        product_name: product.nombre,
+        quantity: product['total'],
+      })
+    );
+    console.log(this.task);
   }
 
   initialQuery() {
@@ -85,9 +121,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
   findProduct(id): ProductCart {
-    return this.total.find(
-      (element) => element.product_id === id
-    );
+    return this.total.find((element) => element.product_id === id);
   }
   sustrabProduct(product) {
     product['total'] = product['total'] < 1 ? 0 : product['total'] - 1;
@@ -95,7 +129,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     if (found !== undefined) {
       const i = this.total.indexOf(found);
       this.total[i].quantity = product['total'];
-      product['total'] === 0 && this.total.splice(i,1);
+      product['total'] === 0 && this.total.splice(i, 1);
     }
   }
   addProduct(product: Product) {
@@ -111,8 +145,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
       const i = this.total.indexOf(found);
       this.total[i].quantity = product['total'];
     }
-   }
-  
+  }
+
   async viewDetail(): Promise<void> {
     const data = this.total;
     data['cart_id'] = this.cart.id;

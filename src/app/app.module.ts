@@ -4,10 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StoreModule } from '@ngrx/store';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { MatIconModule } from '@angular/material/icon';
+import { taskReducer } from './shared/ngrx/counter.reducer';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -17,8 +18,8 @@ import { MatIconModule } from '@angular/material/icon';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    StoreModule.forRoot({}, {}),
     MatIconModule,
+    StoreModule.forRoot({tasks: taskReducer}),
     AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [],

@@ -22,7 +22,6 @@ export class ProductService {
     );
   }
   getProducts(): Observable<Product[]> {
-    //Obtener los clientes
     this.products = this.productsColeccion.snapshotChanges().pipe(
       map(cambios => {
         return cambios.map(accion => {
