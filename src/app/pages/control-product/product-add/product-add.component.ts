@@ -8,6 +8,7 @@ import {
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ProductService } from 'src/app/shared/services/product.service';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-product-add',
   templateUrl: './product-add.component.html',
@@ -66,15 +67,21 @@ export class ProductAddComponent implements OnInit, OnDestroy {
   OnSubmit() {
     this.productService.addProduct(this.form.value);
     this.form.reset();
+    Swal.fire('Exito!', 'Se ha creado el producto de forma exitosa', 'success');
   }
   OnUpdate() {
-    this.productService.putProduct(this.form.value);
+    const data = this.form.value;
+    data['id'] = this.data.id;
+    this.productService.putProduct(data);
+    Swal.fire('Exito!', 'Se ha actualizado el producto de forma exitosa', 'success');
     this.closeModal();
   }
   closeModal() {
     this.dialogRef.close();
   }
-
+  presentSwall(title, html, icon, timer) {
+    Swal.fire({ title, html, icon, timer, timerProgressBar: true });
+  }
   ngOnDestroy(): void {
     this.unsubscribeSignal.next();
     // Don't forget to unsubscribe from subject itself

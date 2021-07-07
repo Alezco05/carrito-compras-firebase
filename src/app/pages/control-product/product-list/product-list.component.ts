@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { map, reduce, takeUntil } from 'rxjs/operators';
 import { Product } from 'src/app/shared/models/products.model';
 import { ProductService } from 'src/app/shared/services/product.service';
+import Swal from 'sweetalert2';
 // import Echo from 'laravel-echo';
 // import { AuthService } from 'src/app/services/auth.service';
 
@@ -24,20 +25,24 @@ export class ProductListComponent implements OnInit, OnDestroy {
   p: number = 1;
   name = new FormControl('');
   index: number;
-  constructor(private productService: ProductService, public dialog: MatDialog)
-  { }
+  constructor(
+    private productService: ProductService,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.initialQuery();
-
   }
-
+  
   initialQuery() {
     this.p = 1;
     this.name.reset();
     this.productService
       .getProducts()
-      .pipe(takeUntil(this.unsubscribeSignal.asObservable()))
+      .pipe(
+        map((x) => Object.keys(x).map((key) =>Object.assign(x[key], { total: 0 }))),
+        takeUntil(this.unsubscribeSignal.asObservable())
+      )
       .subscribe(
         (resp) => {
           this.products = resp.sort((a, b) =>
@@ -47,13 +52,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
         (err) => console.log(err)
       );
   }
-  deleteUser(product){
 
-  }
- /*  deleteUser(e) {
+  deleteProduct(product: Product) {
     Swal.fire({
-      title: 'Se eliminara el siguiente usuario',
-      text: `${e.target.dataset.idpersona} - ${e.target.dataset.nombrepersona} ${e.target.dataset.apellidopersona}`,
+      title: 'Se eliminara el siguiente registro',
+      text: `${product.nombre} - ${product.sku}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -62,46 +65,29 @@ export class ProductListComponent implements OnInit, OnDestroy {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.userSrv
-          .deleteUser(e.target.dataset.idpersona)
-          .pipe(takeUntil(this.unsubscribeSignal.asObservable()))
-          .subscribe(
-            () =>
-              Swal.fire(
-                '¡Listo!',
-                'Se elimino al usuario de la BD',
-                'success'
-              ).then(() => {
-                const data: { usuario: string } = {
-                  usuario: this.name.value,
-                };
-                this.userSrv
-                  .getUserbyName(data)
-                  .pipe(takeUntil(this.unsubscribeSignal.asObservable()))
-                  .subscribe(
-                    (resp) => (this.users = resp),
-                    (err) => console.log(err)
-                  );
-              }),
-            () =>
-              Swal.fire('ERROR!', 'Algo ha fallado intente mas tarde', 'error')
-          );
+        this.productService.deleteProduct(product);
+        Swal.fire('¡Listo!', 'Se elimino el registro de la BD', 'success');
       }
     });
-  } */
+  }
 
-   async updateUser(data): Promise<void> {
-    const { ProductAddComponent } = await import('../product-add/product-add.component');
-    const dialogRef = this.dialog.open(ProductAddComponent, {
+  async updateProduct(data): Promise<void> {
+    const { ProductAddComponent } = await import(
+      '../product-add/product-add.component'
+    );
+    this.dialog.open(ProductAddComponent, {
       width: '800px',
       data,
     });
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribeSignal.asObservable()))
-      .subscribe(() => {
-        console.log('a');
-      });
+  }
+  sustrabProduct(product) {
+    product['total'] = product['total'] < 1 ? 0 : product['total'] - 1;
+  }
+  addProduct(product) {
+    product['total']++;
+  }
+  onChange(){
+    this.p = 1;
   }
   ngOnDestroy(): void {
     this.unsubscribeSignal.next();

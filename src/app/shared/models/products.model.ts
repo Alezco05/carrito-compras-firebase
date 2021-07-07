@@ -3,4 +3,5 @@ export interface Product {
     nombre: string;
     sku: string;
     descripcion: string;
+    total: number;
 }
