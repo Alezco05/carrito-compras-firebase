@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { map, reduce, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
+import { Cart } from 'src/app/shared/models/carts.model';
+import { ProductCart } from 'src/app/shared/models/productCarts.model';
 import { Product } from 'src/app/shared/models/products.model';
 import { ProductService } from 'src/app/shared/services/product.service';
 import Swal from 'sweetalert2';
-// import Echo from 'laravel-echo';
-// import { AuthService } from 'src/app/services/auth.service';
-
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
@@ -16,8 +16,7 @@ import Swal from 'sweetalert2';
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   searched: Boolean = false;
-  //faTrash = faTrash;
-  //faPencilAlt = faPencilAlt;
+  total: ProductCart[] = [];
   filterPost = '';
   unsubscribeSignal: Subject<void> = new Subject();
   searchForm: FormGroup;
@@ -25,22 +24,30 @@ export class ProductListComponent implements OnInit, OnDestroy {
   p: number = 1;
   name = new FormControl('');
   index: number;
+  cart: Cart;
   constructor(
     private productService: ProductService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { 
+    const data = this.activatedRoute.snapshot.queryParamMap.get('data');
+    this.cart = JSON.parse(atob(data));
+  }
 
   ngOnInit(): void {
     this.initialQuery();
   }
-  
+
   initialQuery() {
     this.p = 1;
     this.name.reset();
     this.productService
       .getProducts()
       .pipe(
-        map((x) => Object.keys(x).map((key) =>Object.assign(x[key], { total: 0 }))),
+        map((x) =>
+          Object.keys(x).map((key) => Object.assign(x[key], { total: 0 }))
+        ),
         takeUntil(this.unsubscribeSignal.asObservable())
       )
       .subscribe(
@@ -81,12 +88,46 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
   sustrabProduct(product) {
+    const product_id = product.id;
     product['total'] = product['total'] < 1 ? 0 : product['total'] - 1;
+    const found = this.total.find(
+      (element) => element.product_id === product_id
+    );
+    if (found !== undefined) {
+      const i = this.total.indexOf(found);
+      this.total[i].quantity = product['total'];
+      product['total'] === 0 && this.total.splice(i,1);
+    }
   }
-  addProduct(product) {
+  addProduct(product: Product) {
     product['total']++;
+    const product_id = product.id;
+    const found = this.total.find(
+      (element) => element.product_id === product_id
+    );
+    if (found === undefined) {
+      this.total.push({
+        product_id,
+        product_name: product.nombre,
+        quantity: product['total'],
+      });
+    } else {
+      const i = this.total.indexOf(found);
+      this.total[i].quantity = product['total'];
+    }
+   }
+  async viewDetail(): Promise<void> {
+    const data = this.total;
+    data['cart_id'] = this.cart.id;
+    const { PodructsDetailComponent } = await import(
+      '../podructs-detail/podructs-detail.component'
+    );
+    this.dialog.open(PodructsDetailComponent, {
+      width: '800px',
+      data,
+    });
   }
-  onChange(){
+  onChange() {
     this.p = 1;
   }
   ngOnDestroy(): void {

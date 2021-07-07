@@ -1,0 +1,28 @@
+<div class="row d-flex justify-content-center">
+    <div class="col-md-5">
+        <h1>Detalles del carro</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <mat-list>
+            <mat-list-item *ngFor="let d of data">
+                <mat-icon mat-list-icon>folder</mat-icon>
+                <div mat-line>{{d.product_name}}</div>
+                <div mat-line>Cantidad: {{d.quantity }} </div>
+            </mat-list-item>
+        </mat-list>
+    </div>
+</div>
+<div class="row d-flex justify-content-center mt-4">
+    <div class="col-md-8 col-sm-9 col-lg-5 col-xs-10 mb-2">
+      <button mat-raised-button class="btn btn-block btn-info" (click)="createProductCart()">
+        <span class="ml-2">Completar Carrito</span>
+      </button>
+    </div>
+    <div class="col-md-8 col-sm-9 col-lg-5 col-xs-10 mb-2">
+      <button mat-raised-button class="btn btn-block btn-danger" (click)="closeModal()">
+        <span class="ml-2">Cancelar</span>
+      </button>
+    </div>
+  </div>

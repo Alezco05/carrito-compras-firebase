@@ -1,4 +1,4 @@
 export interface Cart { 
-    id: string;
+    id?: string;
     status: string;
 }

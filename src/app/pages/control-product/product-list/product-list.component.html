@@ -20,9 +20,10 @@
         <small class="pl-2">Nota: Introduzca <b>nombre </b> o <b>sku</b></small>
       </div>
     </div>
-
+ 
+    <div class="row d-flex justify-content-center mt-4">
     <div *ngIf="products.length > 0">
-      <table class="table pt-2 w-100">
+      <table class="table pt-2 w-100" >
         <thead class="thead-light">
           <tr>
             <th>Acción</th>
@@ -30,7 +31,6 @@
             <th>Sku</th>
             <th>Descripción</th>
             <th>Gestionar</th>
-            <th>Orden</th>
           </tr>
         </thead>
         <tbody>
@@ -67,11 +67,6 @@
                 </div>
               </div>
             </td>
-            <td>
-              <button mat-icon-button [disabled]="u.total < 1">
-                <mat-icon>shopping_cart</mat-icon>
-              </button>
-             </td>
           </tr>
         </tbody>
       </table>
@@ -83,7 +78,14 @@
         No se encontraron resultados.
       </div>
     </div>
-
-
+  </div>
+  <div class="row d-flex justify-content-center mt-4" *ngIf="total.length > 0">
+    <div class="col-6">
+      <button mat-raised-button color="warn" class="btn btn-block" (click)="viewDetail()">
+        <mat-icon>shopping_cart</mat-icon>
+        <span class="ml-2">Completar Carrito</span>
+      </button>
+    </div>
+  </div>
   </div>
 </div>

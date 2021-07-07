@@ -11,12 +11,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProductAddComponent } from './product-add/product-add.component';
 import { ControlProductsRoutingModule } from './control-products-routing.module';
 import { MatButtonModule } from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
 import { ProductListComponent } from './product-list/product-list.component';
 import { MyPipesModule } from 'src/app/shared/pipes/pipe.module';
 import { ControlProductsComponent } from './control-products.component';
+import { PodructsDetailComponent } from './podructs-detail/podructs-detail.component';
 
 @NgModule({
-  declarations: [ControlProductsComponent, ProductAddComponent, ProductListComponent],
+  declarations: [ControlProductsComponent, ProductAddComponent, ProductListComponent, PodructsDetailComponent],
   imports: [
     CommonModule,
     ControlProductsRoutingModule,
@@ -29,6 +31,7 @@ import { ControlProductsComponent } from './control-products.component';
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
+    MatListModule,
     MyPipesModule,
   ],
 })
