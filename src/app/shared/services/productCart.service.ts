@@ -6,7 +6,9 @@ import {
 } from "@angular/fire/firestore";
 import { ProductCart } from "../models/productCarts.model";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
+import { Cart } from "../models/carts.model";
+import { query } from "@angular/animations";
 
 @Injectable({
   providedIn: "root"
@@ -56,5 +58,10 @@ export class ProductCartService {
   deleteProductCart(productCart:ProductCart){
     this.productCartDoc = this.db.doc(`productsCarts/${productCart.product_id}`);
     this.productCartDoc.delete();
+  }
+  getProductByCart(id: string) {
+    const pcs = this.db.collection<ProductCart>('productsCarts', ref => ref.where('cart_id', '==', id))
+    .valueChanges().pipe(map(x=>x));
+    return pcs;
   }
 }

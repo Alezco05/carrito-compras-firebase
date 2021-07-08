@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Cart } from 'src/app/shared/models/carts.model';
 import { CartService } from 'src/app/shared/services/carts.service';
+import { ProductCartService } from 'src/app/shared/services/productCart.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,10 +15,13 @@ import Swal from 'sweetalert2';
 export class CartListComponent implements OnInit {
   carts: Cart[] = [];
   p: number = 1;
-  constructor(private cartService: CartService, private router: Router) { }
+  constructor(private cartService: CartService, 
+    public dialog: MatDialog,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.getCarts();
+    
   }
   getCarts(){
     this.cartService.getCarts().subscribe(
@@ -49,4 +54,14 @@ export class CartListComponent implements OnInit {
     this.router.navigate(['productos'], { queryParams });
 
   }
+  async viewDetails(data){
+    const { CartDetailComponent } = await import(
+      '../cart-detail/cart-detail.component'
+    );
+    this.dialog.open(CartDetailComponent, {
+      width: '800px',
+      data,
+    });
+  }
+
 }

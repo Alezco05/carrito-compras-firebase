@@ -8,10 +8,14 @@ import {MatCardModule} from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { CartDetailComponent } from './cart-detail/cart-detail.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
-    CartListComponent
+    CartListComponent,
+    CartDetailComponent
   ],
   imports: [
     CommonModule,
@@ -20,6 +24,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
     MatButtonModule,
     MatCardModule,
     NgxPaginationModule,
+    MatDialogModule,
+    MatListModule
   ]
 })
 export class CartModule { }

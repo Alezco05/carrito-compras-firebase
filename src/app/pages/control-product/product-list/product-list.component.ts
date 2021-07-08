@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -10,7 +10,6 @@ import { ProductCart } from 'src/app/shared/models/productCarts.model';
 import { Product } from 'src/app/shared/models/products.model';
 import { ProductService } from 'src/app/shared/services/product.service';
 import Swal from 'sweetalert2';
-import { AppState } from './../../../shared/models/appState';
 import * as TaskActions from './../../../shared/ngrx/counter.actions';
 import { Add } from './../../../shared/ngrx/counter.actions';
 
@@ -94,7 +93,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
   findProduct(id): ProductCart {
     let found;
-    this.todos$.subscribe((x) => {
+    this.todos$.pipe(takeUntil(this.unsubscribeSignal.asObservable())).subscribe((x) => {
       this.total = x;
       found = x.find((element) => element.product_id === id);
     });
@@ -125,7 +124,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   async viewDetail(): Promise<void> {
     let data: any = {};
-    this.todos$.subscribe((x) => {
+    this.todos$.pipe(takeUntil(this.unsubscribeSignal.asObservable())).subscribe((x) => {
       data = x.map((item) =>
         Object.assign({}, item, {
           product_name: item['nombre'],

@@ -28,7 +28,8 @@
                             <p class="d-flex justify-content-between"> Estado<strong> {{c.status}} </strong></p>
                         </mat-card-content>
                         <mat-card-actions>
-                            <button mat-button color="primary" [disabled]="c.status === 'completed'" (click)="addItemsToCart(c)">AGREGAR PRODUCTOS</button>
+                            <button mat-button color="primary" *ngIf="c.status !== 'completed'" (click)="addItemsToCart(c)">AGREGAR PRODUCTOS</button>
+                            <button mat-button color="primary" *ngIf="c.status === 'completed'" (click)="viewDetails(c)">VER DETALLES</button>
                             <button mat-button color="warn" (click)="deleteCart(c)">ELIMINAR</button>
                         </mat-card-actions>
                     </mat-card>
