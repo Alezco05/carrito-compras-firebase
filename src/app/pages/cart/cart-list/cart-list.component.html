@@ -1,18 +1,41 @@
-<div class="row bg-primary d-flex align-items-center mb-4">
-    <div class="col-md-8">
-        <h1 class="text-center text-light p-3 mb-0">Listado de los carros</h1>
+<div class="row ">
+    <div class="col-md-10 jumbotron">
+        <h1 class="text-center p-3 mb-0">
+        Listado de Carritos
+        </h1>   
+        </div>
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col-3">
+                <mat-form-field appearance="outline">
+                    <mat-label>Seleccionar una opción</mat-label>
+                    <mat-select [formControl]="select">
+                        <mat-option value="all"> Todos los carritos </mat-option>
+                        <mat-option value="completed"> Carritos Completados </mat-option>
+                        <mat-option value="pending">Carritos Pendientes </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+         
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 mt-2">
+                <button mat-raised-button color="primary" class="btn btn-block" (click)="createCar()">
+                    <span class="ml-2">Crear Carrito</span>
+                </button>
+            </div>
+        </div>
     </div>
-    <div class="col-md-3">
-        <button mat-button class="text-light btn btn-block" (click)="createCar()">
-            <span class="ml-2">Crear Carrito</span>
-        </button>
-    </div>
+       
 </div>
+
+
 <div class="row">
     <div class="col-12">
         <div *ngIf="(carts.length > 0); else noData" class="animate__animated animate__fadeIn">
             <div class="row mb-3">
-                <div *ngFor="let c of carts | paginate: { itemsPerPage: 6, currentPage: p } " class="col-lg-4 col-md-6 col-12 mt-3">
+                <div *ngFor="let c of carts | paginate: { itemsPerPage: 6, currentPage: p } "
+                    class="col-lg-4 col-md-6 col-12 mt-3">
                     <mat-card>
                         <ng-container *ngIf="c.status === 'completed'; else elseTemplate">
                             <img mat-card-image class="img-fluid mx-auto d-block my-5" style="width:80px; height:80px;"
@@ -28,22 +51,24 @@
                             <p class="d-flex justify-content-between"> Estado<strong> {{c.status}} </strong></p>
                         </mat-card-content>
                         <mat-card-actions>
-                            <button mat-button color="primary" *ngIf="c.status !== 'completed'" (click)="addItemsToCart(c)">AGREGAR PRODUCTOS</button>
-                            <button mat-button color="primary" *ngIf="c.status === 'completed'" (click)="viewDetails(c)">VER DETALLES</button>
+                            <button mat-button color="primary" *ngIf="c.status !== 'completed'"
+                                (click)="addItemsToCart(c)">AGREGAR PRODUCTOS</button>
+                            <button mat-button color="primary" *ngIf="c.status === 'completed'"
+                                (click)="viewDetails(c)">VER DETALLES</button>
                             <button mat-button color="warn" (click)="deleteCart(c)">ELIMINAR</button>
                         </mat-card-actions>
                     </mat-card>
                 </div>
             </div>
             <pagination-controls class="d-flex justify-content-center" (pageChange)="p = $event" previousLabel=""
-            nextLabel=""></pagination-controls>
+                nextLabel=""></pagination-controls>
         </div>
-        
+
         <ng-template #noData>
             <div class="alert alert-info" role="alert">
-                <h1>
+                <h2>
                     <p class="text-center">No se encontraron resultados.</p>
-                </h1>
+                </h2>
             </div>
         </ng-template>
     </div>

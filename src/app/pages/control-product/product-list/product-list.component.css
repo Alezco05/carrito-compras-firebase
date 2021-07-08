@@ -77,3 +77,6 @@ input:focus{
     width: 500px;
     max-width: 100%;
   }
+  .pointer{
+    cursor: pointer;
+  }
