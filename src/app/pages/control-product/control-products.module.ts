@@ -16,8 +16,6 @@ import { ProductListComponent } from './product-list/product-list.component';
 import { MyPipesModule } from 'src/app/shared/pipes/pipe.module';
 import { ControlProductsComponent } from './control-products.component';
 import { PodructsDetailComponent } from './podructs-detail/podructs-detail.component';
-import { StoreModule } from '@ngrx/store';
-import { taskReducer } from 'src/app/shared/ngrx/counter.reducer';
 
 
 @NgModule({

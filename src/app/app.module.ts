@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { MatIconModule } from '@angular/material/icon';
-import { taskReducer } from './shared/ngrx/counter.reducer';
+import { todoReducer } from './shared/ngrx/counter.reducer';
 import { StoreModule } from '@ngrx/store';
 
 @NgModule({
@@ -19,7 +19,9 @@ import { StoreModule } from '@ngrx/store';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatIconModule,
-    StoreModule.forRoot({tasks: taskReducer}),
+    StoreModule.forRoot({
+      todoState: todoReducer
+    }),
     AngularFireModule.initializeApp(environment.firebase)
   ],
   providers: [],

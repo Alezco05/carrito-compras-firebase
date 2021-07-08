@@ -12,6 +12,7 @@ import { ProductService } from 'src/app/shared/services/product.service';
 import Swal from 'sweetalert2';
 import {AppState} from './../../../shared/models/appState' 
 import * as TaskActions from './../../../shared/ngrx/counter.actions';
+import { Add } from './../../../shared/ngrx/counter.actions';
 
 @Component({
   selector: 'app-product-list',
@@ -28,13 +29,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
   name = new FormControl('');
   cart: Cart;
   task: Observable<ProductCart[]>;
+  todos$: Observable<ProductCart[]>;
+  
   constructor(
     private productService: ProductService,
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
-    private store: Store<AppState>
+    private store: Store<{ todoState: Array<ProductCart> }>
   ) {
-    this.task = this.store.select<any>('productCart');
+    this.todos$ = store.select(state => state.todoState);
+    this.todos$.subscribe(console.log);
     const data = this.activatedRoute.snapshot.queryParamMap.get('data');
     this.cart = JSON.parse(atob(data));
   }
@@ -42,36 +46,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initialQuery();
   }
-  increment(product: Product) {
-    product['total']++;
-    const found = this.findProduct(product.id);
-    if (found === undefined) {
-      this.store.dispatch(
-        new TaskActions.AddProductCart({
-          product_id: product.id,
-          product_name: product.nombre,
-          quantity: product['total'],
-        })
-      );
-      this.total.push({
-        product_id: product.id,
-        product_name: product.nombre,
-        quantity: product['total'],
-      });
-    } else {
-      const i = this.total.indexOf(found);
-      this.total[i].quantity = product['total'];
-    }
-    this.store.dispatch(
-      new TaskActions.UpdateProductCart({
-        product_id: product.id,
-        product_name: product.nombre,
-        quantity: product['total'],
-      })
-    );
-    console.log(this.task);
-  }
-
   initialQuery() {
     this.p = 1;
     this.name.reset();
@@ -129,6 +103,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
     if (found !== undefined) {
       const i = this.total.indexOf(found);
       this.total[i].quantity = product['total'];
+      product['quantity'] = product['total'];
+      this.store.dispatch(TaskActions.Update(product));
+      product['total'] === 0 && this.store.dispatch(TaskActions.Remove({index: i}));;
       product['total'] === 0 && this.total.splice(i, 1);
     }
   }
@@ -136,6 +113,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
     product['total']++;
     const found = this.findProduct(product.id);
     if (found === undefined) {
+      product['quantity'] = product['total'];
+      this.store.dispatch(Add(product));
       this.total.push({
         product_id: product.id,
         product_name: product.nombre,
@@ -143,9 +122,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
       });
     } else {
       const i = this.total.indexOf(found);
+      product['quantity'] = product['total'];
+      this.store.dispatch(TaskActions.Update(product));
       this.total[i].quantity = product['total'];
     }
-  }
+ }
 
   async viewDetail(): Promise<void> {
     const data = this.total;
