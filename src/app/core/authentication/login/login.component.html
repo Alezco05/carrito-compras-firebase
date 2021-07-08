@@ -20,7 +20,7 @@
           <button [disabled]="form.invalid">{{title}}</button>
           <p class="message" *ngIf="params === 'login' ; else signIn"><a routerLink="/auth/registrarse">Registrarse</a></p>
           <ng-template #signIn>
-              <p class="message"><a routerLink="/auth/registrarse">Iniciar Sesión</a></p>
+              <p class="message"><a routerLink="/auth/login">Iniciar Sesión</a></p>
           </ng-template>
         </form>
       </div>

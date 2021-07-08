@@ -55,12 +55,19 @@ export class LoginComponent implements OnInit {
     });
   }
   signUp(data){
-    this.dataService.signUp(data) .then(() => {
+    this.dataService.signUp(data).then((resp: any) => {
+      localStorage.setItem('user', JSON.stringify(resp.user.email));
+      this.dataService.getToken();
       this.router.navigate(["/"]);
     })
-    .catch(() => {
+    .catch((error) => {
         this.error = 1;
-        this.textError = 'Hubo un error inexperado intente de nuevo o comuniquese con el adminstrador';
+        if(error.code == "auth/email-already-in-use"){
+          this.textError = 'Este email ya se encuentra registrado';
+        }
+        else{
+          this.textError = 'Hubo un error inexperado intente de nuevo o comuniquese con el adminstrador';
+        }
         setTimeout(() => (this.error = 0), 3000); 
     });
   }
