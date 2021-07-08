@@ -10,7 +10,7 @@ import { ProductCart } from 'src/app/shared/models/productCarts.model';
 import { Product } from 'src/app/shared/models/products.model';
 import { ProductService } from 'src/app/shared/services/product.service';
 import Swal from 'sweetalert2';
-import {AppState} from './../../../shared/models/appState' 
+import { AppState } from './../../../shared/models/appState';
 import * as TaskActions from './../../../shared/ngrx/counter.actions';
 import { Add } from './../../../shared/ngrx/counter.actions';
 
@@ -20,7 +20,6 @@ import { Add } from './../../../shared/ngrx/counter.actions';
   styleUrls: ['./product-list.component.css'],
 })
 export class ProductListComponent implements OnInit, OnDestroy {
-  total: ProductCart[] = [];
   filterPost = '';
   unsubscribeSignal: Subject<void> = new Subject();
   searchForm: FormGroup;
@@ -30,15 +29,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
   cart: Cart;
   task: Observable<ProductCart[]>;
   todos$: Observable<ProductCart[]>;
-  
+  total: ProductCart[] = [];
   constructor(
     private productService: ProductService,
     public dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private store: Store<{ todoState: Array<ProductCart> }>
   ) {
-    this.todos$ = store.select(state => state.todoState);
-    this.todos$.subscribe(console.log);
+    this.todos$ = store.select((state) => state.todoState);
     const data = this.activatedRoute.snapshot.queryParamMap.get('data');
     this.cart = JSON.parse(atob(data));
   }
@@ -95,42 +93,46 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
   findProduct(id): ProductCart {
-    return this.total.find((element) => element.product_id === id);
+    let found;
+    this.todos$.subscribe((x) => {
+      this.total = x;
+      found = x.find((element) => element.product_id === id);
+    });
+    return found;
   }
   sustrabProduct(product) {
     product['total'] = product['total'] < 1 ? 0 : product['total'] - 1;
     const found = this.findProduct(product.id);
     if (found !== undefined) {
       const i = this.total.indexOf(found);
-      this.total[i].quantity = product['total'];
       product['quantity'] = product['total'];
       this.store.dispatch(TaskActions.Update(product));
-      product['total'] === 0 && this.store.dispatch(TaskActions.Remove({index: i}));;
-      product['total'] === 0 && this.total.splice(i, 1);
+      product['total'] === 0 &&
+        this.store.dispatch(TaskActions.Remove({ index: i }));
     }
   }
   addProduct(product: Product) {
     product['total']++;
+    product['quantity'] = product['total'];
+    product['product_id'] = product.id;
     const found = this.findProduct(product.id);
     if (found === undefined) {
-      product['quantity'] = product['total'];
       this.store.dispatch(Add(product));
-      this.total.push({
-        product_id: product.id,
-        product_name: product.nombre,
-        quantity: product['total'],
-      });
     } else {
-      const i = this.total.indexOf(found);
-      product['quantity'] = product['total'];
       this.store.dispatch(TaskActions.Update(product));
-      this.total[i].quantity = product['total'];
     }
- }
+  }
 
   async viewDetail(): Promise<void> {
-    const data = this.total;
-    data['cart_id'] = this.cart.id;
+    let data: any = {};
+    this.todos$.subscribe((x) => {
+      data = x.map((item) =>
+        Object.assign({}, item, {
+          product_name: item['nombre'],
+          cart_id: this.cart.id,
+        })
+      );
+    });
     const { PodructsDetailComponent } = await import(
       '../podructs-detail/podructs-detail.component'
     );

@@ -27,7 +27,7 @@ export class PodructsDetailComponent implements OnInit {
   createProductCart() {
     this.data.forEach((d) => {
       this.pCservice.addProductCart({
-        cart_id: this.data.cart_id,
+        cart_id: d.cart_id,
         product_id: d.product_id,
         quantity: d.quantity,
       });
@@ -39,7 +39,7 @@ export class PodructsDetailComponent implements OnInit {
   }
   updateCart() {
     const data = {
-      id: this.data.cart_id,
+      id: this.data[0].cart_id,
       status: 'completed'
     }
     this.cartService.putCart(data);
