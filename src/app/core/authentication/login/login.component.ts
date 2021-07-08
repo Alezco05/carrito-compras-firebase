@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
     .signIn(data)
     .then((resp: any) => {
       localStorage.setItem('user', JSON.stringify(resp.user.email));
+      this.dataService.getToken();
       this.router.navigate(["/"]);
     })
     .catch(() => {

@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
 import { MatIconModule } from '@angular/material/icon';
 import { todoReducer } from './shared/ngrx/counter.reducer';
 import { StoreModule } from '@ngrx/store';
-
+import { NavbarModule } from './shared/components/navbar/navbar.module';
 @NgModule({
   declarations: [
     AppComponent
@@ -19,6 +19,7 @@ import { StoreModule } from '@ngrx/store';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatIconModule,
+    NavbarModule,
     StoreModule.forRoot({
       todoState: todoReducer
     }),
