@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 })
 export class CartListComponent implements OnInit {
   carts: Cart[] = [];
+  p: number = 1;
   constructor(private cartService: CartService, private router: Router) { }
 
   ngOnInit(): void {

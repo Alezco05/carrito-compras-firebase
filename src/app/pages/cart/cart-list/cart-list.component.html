@@ -12,7 +12,7 @@
     <div class="col-12">
         <div *ngIf="(carts.length > 0); else noData" class="animate__animated animate__fadeIn">
             <div class="row mb-3">
-                <div *ngFor="let c of carts " class="col-lg-4 col-md-6 col-12 mt-3">
+                <div *ngFor="let c of carts | paginate: { itemsPerPage: 6, currentPage: p } " class="col-lg-4 col-md-6 col-12 mt-3">
                     <mat-card>
                         <ng-container *ngIf="c.status === 'completed'; else elseTemplate">
                             <img mat-card-image class="img-fluid mx-auto d-block my-5" style="width:80px; height:80px;"
@@ -34,8 +34,10 @@
                     </mat-card>
                 </div>
             </div>
-
+            <pagination-controls class="d-flex justify-content-center" (pageChange)="p = $event" previousLabel=""
+            nextLabel=""></pagination-controls>
         </div>
+        
         <ng-template #noData>
             <div class="alert alert-info" role="alert">
                 <h1>
